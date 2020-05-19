@@ -2,7 +2,7 @@ package myquoter_gui;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
-
+import java.util.Stack;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -32,24 +32,30 @@ import java.awt.Font;
 import javax.swing.JTextPane;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import javax.swing.JSpinner;
 
 public class MyQuoter1_7 extends JFrame {
 
 	private JPanel contentPane;
-	private JTextField quantity_textField;
 	private JComboBox<String> patterns;
 	private JButton add_for_total_btn;
 	private JRadioButton upsRadioBtn;
 	private Box shipping_methods;
-	private JButton calculate_btn;
 	private JScrollPane scrollPane_for_textfield;
 	private JRadioButton usps_mediumbox;
 	private JRadioButton usps_standard_shipping;
 	private JRadioButton usps_express_shipping;
-	private JTextArea result_textfield;
+	private JTextArea total;
 	private JTextField ups_textField;
 	private JComboBox<String> bundles_and_wigs_lengths;
 	private JComboBox<String> closure_and_frontal_lengths;
+	private int quantity; 
+	private Stack<String> orderStack = new Stack<String>();
+	private JButton clearBtn;
+	private JButton gobackBtn;
+	private JSpinner spinner;
 	
 	/**
 	 * Launch the application.
@@ -72,51 +78,52 @@ public class MyQuoter1_7 extends JFrame {
 	 */
 	public MyQuoter1_7() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 796, 665);
+		setBounds(100, 100, 597, 665);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		
-		quantity_textField = new JTextField();
-		quantity_textField.setText("Quantity");
-		quantity_textField.setColumns(10);
-		
-		add_for_total_btn = new JButton("Add For Total");
-		
-		upsRadioBtn = new JRadioButton("UPS");
+		upsRadioBtn = new JRadioButton("UPS/FedEx");
 		
 		shipping_methods = Box.createVerticalBox();
-		
-		calculate_btn = new JButton("Calculate");
-		calculate_btn.setFont(new Font("Open Sans Extrabold", Font.PLAIN, 24));
 		
 		scrollPane_for_textfield = new JScrollPane();
 		
 		bundles_and_wigs_lengths = new JComboBox<String>();
+		bundles_and_wigs_lengths.setMaximumRowCount(11);
 		bundles_and_wigs_lengths.addItem("10\"");bundles_and_wigs_lengths.addItem("12\"");bundles_and_wigs_lengths.addItem("14\"");bundles_and_wigs_lengths.addItem("16\"");bundles_and_wigs_lengths.addItem("18\"");
 		bundles_and_wigs_lengths.addItem("20\"");bundles_and_wigs_lengths.addItem("22\"");bundles_and_wigs_lengths.addItem("24\"");bundles_and_wigs_lengths.addItem("26\"");bundles_and_wigs_lengths.addItem("28\"");bundles_and_wigs_lengths.addItem("30\"");
 		
+		
 		closure_and_frontal_lengths = new JComboBox<String>();
+		closure_and_frontal_lengths.setMaximumRowCount(6);
 		closure_and_frontal_lengths.addItem("10\"");closure_and_frontal_lengths.addItem("12\"");closure_and_frontal_lengths.addItem("14\"");
 		closure_and_frontal_lengths.addItem("16\"");closure_and_frontal_lengths.addItem("18\"");closure_and_frontal_lengths.addItem("20\"");
 		
 		patterns = new JComboBox<>();
-		patterns.setMaximumRowCount(20);
+		patterns.setMaximumRowCount(30);
 		patterns.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent choose) {
 				try {
-					if(patterns.getSelectedIndex() >= 0 && patterns.getSelectedIndex() <= 7) {
+										
+					if(patterns.getSelectedIndex() >= 0 && patterns.getSelectedIndex() <= 8) {
 						bundles_and_wigs_lengths.setEnabled(true);
 						closure_and_frontal_lengths.setEnabled(false);
 					}
-					if(patterns.getSelectedIndex() >= 8 && patterns.getSelectedIndex() <= 28) {
+					if(patterns.getSelectedIndex() >= 9 && patterns.getSelectedIndex() <= 29) {
 						closure_and_frontal_lengths.setEnabled(true);
 						bundles_and_wigs_lengths.setEnabled(false);
 					}
-					if(patterns.getSelectedIndex() >= 29 && patterns.getSelectedIndex() <= 42) {
+					if(patterns.getSelectedIndex() >= 30 && patterns.getSelectedIndex() <= 43) {
 						bundles_and_wigs_lengths.setEnabled(true);
 						closure_and_frontal_lengths.setEnabled(false);
 					}
+					if(patterns.getSelectedIndex() >= 44 && patterns.getSelectedIndex() <= 46) {
+						bundles_and_wigs_lengths.setEnabled(true);
+						closure_and_frontal_lengths.setEnabled(false);
+					}
+					
+					//orderStack.push(patterns.getItemAt(patterns.getSelectedIndex()));
 				}
 				catch(Exception e) {
 					e.printStackTrace();
@@ -127,11 +134,11 @@ public class MyQuoter1_7 extends JFrame {
 						
 		//bundles
 		patterns.addItem("Straight");patterns.addItem("Loose Wave");patterns.addItem("Body Wave");patterns.addItem("Deep Wave");
-		patterns.addItem("Rare Curly");patterns.addItem("Steam #1");patterns.addItem("Steam #2");patterns.addItem("Blonde");
+		patterns.addItem("Rare Curly");patterns.addItem("Steam #1");patterns.addItem("Steam #2");patterns.addItem("Blonde");patterns.addItem("Grey");
 		//closures 
 		patterns.addItem("Straight Closure");patterns.addItem("Loose Wave Closure");patterns.addItem("Body Wave Closure");
 		patterns.addItem("Deep Wave Closure");patterns.addItem("Rare Curly Closure");patterns.addItem("Steam #1 Closure");
-		patterns.addItem("Steam #2 Closure");patterns.addItem("Blonde Closure");
+		patterns.addItem("Steam #2 Closure");patterns.addItem("Blonde Closure");patterns.addItem("Grey Closure");
 		
 		patterns.addItem("Straight 5x5 Closure");patterns.addItem("Loose Wave 5x5 Closure");patterns.addItem("Body Wave 5x5 Closure");
 		patterns.addItem("Deep Wave 5x5 Closure");patterns.addItem("Rare Curly 5x5 Closure");
@@ -139,7 +146,7 @@ public class MyQuoter1_7 extends JFrame {
 		//frontals
 		patterns.addItem("Straight Frontal");patterns.addItem("Loose Wave Frontal");patterns.addItem("Body Wave Frontal");
 		patterns.addItem("Deep Wave Frontal");patterns.addItem("Rare Curly Frontal");patterns.addItem("Steam #1 Frontal");patterns.addItem("Steam #2 Frontal");
-		patterns.addItem("Blonde Frontal");
+		patterns.addItem("Blonde Frontal");patterns.addItem("Grey Frontal");
 		
 		//wigs
 		patterns.addItem("Straight Closure Wig");patterns.addItem("Loose Wave Closure Wig");patterns.addItem("Body Wave Closure Wig");
@@ -148,8 +155,81 @@ public class MyQuoter1_7 extends JFrame {
 		patterns.addItem("Straight Frontal Wig");patterns.addItem("Loose Wave Frontal Wig");patterns.addItem("Body Wave Frontal Wig");
 		patterns.addItem("Deep Wave Frontal Wig");patterns.addItem("Rare Curly Frontal Wig");patterns.addItem("Steam #1 Frontal Wig");patterns.addItem("Steam #2 Frontal Wig");
 		
+		//clip-in
+		patterns.addItem("Body wave clip-in");patterns.addItem("Rare curly clip-in");patterns.addItem("Steam curly clip-in");
+		
+		add_for_total_btn = new JButton("ADD FOR TOTAL");
+		add_for_total_btn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent add) {
+				try {
+
+					if(!orderStack.contains(patterns.getItemAt(patterns.getSelectedIndex())))
+					{
+						if(bundles_and_wigs_lengths.isEnabled() == true && closure_and_frontal_lengths.isEnabled() == false) {
+							orderStack.push(patterns.getItemAt(patterns.getSelectedIndex()));
+							orderStack.push(bundles_and_wigs_lengths.getItemAt(bundles_and_wigs_lengths.getSelectedIndex()) + " x " + spinner.getValue().toString());
+						}
+						if(bundles_and_wigs_lengths.isEnabled() == false && closure_and_frontal_lengths.isEnabled() == true) {
+							orderStack.push(patterns.getItemAt(patterns.getSelectedIndex()));
+							orderStack.push(closure_and_frontal_lengths.getItemAt(closure_and_frontal_lengths.getSelectedIndex()) + " x " + spinner.getValue().toString());
+						}
+						total.append(
+								patterns.getItemAt(patterns.getSelectedIndex()) + "\n" +
+								bundles_and_wigs_lengths.getItemAt(bundles_and_wigs_lengths.getSelectedIndex()) + " x " + spinner.getValue().toString() + "\n");
+					}
+					else 
+					{
+						if(bundles_and_wigs_lengths.isEnabled() == true && closure_and_frontal_lengths.isEnabled() == false) {
+							orderStack.push(bundles_and_wigs_lengths.getItemAt(bundles_and_wigs_lengths.getSelectedIndex()) + " x " + spinner.getValue().toString());
+						}
+						if(bundles_and_wigs_lengths.isEnabled() == false && closure_and_frontal_lengths.isEnabled() == true) {
+							orderStack.push(closure_and_frontal_lengths.getItemAt(closure_and_frontal_lengths.getSelectedIndex()) + " x " + spinner.getValue().toString());
+						}
+						total.append(bundles_and_wigs_lengths.getItemAt(bundles_and_wigs_lengths.getSelectedIndex()) + " x " + spinner.getValue().toString() + "\n");
+
+					}
+
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
+				
+			}
+		});
+		
 		ups_textField = new JTextField();
 		ups_textField.setColumns(10);
+		
+		clearBtn = new JButton("CLEAR");
+		clearBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				patterns.setSelectedIndex(0);
+				bundles_and_wigs_lengths.setSelectedIndex(0);
+				closure_and_frontal_lengths.setSelectedIndex(0);
+				bundles_and_wigs_lengths.setEnabled(true);
+				closure_and_frontal_lengths.setEnabled(false);
+				spinner.setValue(0);
+				usps_mediumbox.setSelected(false);
+				usps_standard_shipping.setSelected(false);
+				usps_express_shipping.setSelected(false);
+				ups_textField.setText(null);
+				upsRadioBtn.setSelected(false);
+				total.setText(null);
+				orderStack.removeAllElements();
+			}
+		});
+		
+		gobackBtn = new JButton("GO BACK");
+		gobackBtn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				orderStack.pop();
+				total.setText(null);
+				for(String str : orderStack) {
+					total.append(str+"\n");
+				}
+			}
+		});
+		
+		spinner = new JSpinner();
 	
 		
 		GroupLayout gl_contentPane = new GroupLayout(contentPane);
@@ -159,73 +239,71 @@ public class MyQuoter1_7 extends JFrame {
 					.addContainerGap()
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-								.addComponent(patterns, GroupLayout.PREFERRED_SIZE, 238, GroupLayout.PREFERRED_SIZE)
-								.addComponent(quantity_textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING, false)
-									.addComponent(bundles_and_wigs_lengths, Alignment.LEADING, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-									.addComponent(closure_and_frontal_lengths, Alignment.LEADING, 0, 115, Short.MAX_VALUE)))
-							.addGap(113)
+							.addComponent(scrollPane_for_textfield, GroupLayout.PREFERRED_SIZE, 518, GroupLayout.PREFERRED_SIZE)
+							.addContainerGap())
+						.addGroup(gl_contentPane.createSequentialGroup()
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 								.addGroup(gl_contentPane.createSequentialGroup()
 									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
-										.addComponent(shipping_methods, GroupLayout.PREFERRED_SIZE, 224, Short.MAX_VALUE)
+										.addComponent(add_for_total_btn, GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+										.addComponent(patterns, GroupLayout.PREFERRED_SIZE, 238, GroupLayout.PREFERRED_SIZE)
 										.addGroup(gl_contentPane.createSequentialGroup()
-											.addGap(10)
-											.addComponent(calculate_btn, GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE))
-										.addGroup(gl_contentPane.createSequentialGroup()
-											.addGap(28)
-											.addComponent(add_for_total_btn, GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
-											.addGap(77)))
-									.addGap(80))
+											.addGroup(gl_contentPane.createParallelGroup(Alignment.TRAILING, false)
+												.addComponent(bundles_and_wigs_lengths, Alignment.LEADING, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+												.addComponent(closure_and_frontal_lengths, Alignment.LEADING, GroupLayout.PREFERRED_SIZE, 115, GroupLayout.PREFERRED_SIZE))
+											.addGap(123)))
+									.addGap(27))
 								.addGroup(gl_contentPane.createSequentialGroup()
-									.addPreferredGap(ComponentPlacement.RELATED)
-									.addComponent(ups_textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(ComponentPlacement.UNRELATED)
-									.addComponent(upsRadioBtn, GroupLayout.PREFERRED_SIZE, 61, GroupLayout.PREFERRED_SIZE)))
-							.addGap(256))
-						.addGroup(gl_contentPane.createSequentialGroup()
-							.addComponent(scrollPane_for_textfield, GroupLayout.DEFAULT_SIZE, 746, Short.MAX_VALUE)
-							.addGap(165))))
+									.addComponent(spinner, GroupLayout.PREFERRED_SIZE, 53, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED)))
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+								.addComponent(shipping_methods, GroupLayout.PREFERRED_SIZE, 224, GroupLayout.PREFERRED_SIZE)
+								.addGroup(gl_contentPane.createSequentialGroup()
+									.addGap(10)
+									.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+										.addComponent(gobackBtn)
+										.addComponent(clearBtn)
+										.addGroup(gl_contentPane.createSequentialGroup()
+											.addComponent(ups_textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+											.addPreferredGap(ComponentPlacement.UNRELATED)
+											.addComponent(upsRadioBtn, GroupLayout.PREFERRED_SIZE, 88, GroupLayout.PREFERRED_SIZE)))))
+							.addContainerGap(36, Short.MAX_VALUE))))
 		);
 		gl_contentPane.setVerticalGroup(
 			gl_contentPane.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPane.createSequentialGroup()
+					.addGap(19)
+					.addComponent(patterns, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+					.addGap(18)
 					.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGap(77)
-							.addComponent(patterns, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addGap(18)
 							.addComponent(bundles_and_wigs_lengths, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addGroup(gl_contentPane.createParallelGroup(Alignment.LEADING)
+							.addGap(18)
+							.addComponent(closure_and_frontal_lengths, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addGap(18)
+							.addComponent(spinner, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+							.addGap(14)
+							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
+								.addComponent(add_for_total_btn, GroupLayout.PREFERRED_SIZE, 79, GroupLayout.PREFERRED_SIZE)
 								.addGroup(gl_contentPane.createSequentialGroup()
-									.addGap(72)
-									.addComponent(quantity_textField, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE))
-								.addGroup(gl_contentPane.createSequentialGroup()
-									.addGap(18)
-									.addComponent(closure_and_frontal_lengths, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-							.addGap(151))
+									.addComponent(clearBtn, GroupLayout.PREFERRED_SIZE, 37, GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+									.addComponent(gobackBtn, GroupLayout.PREFERRED_SIZE, 33, GroupLayout.PREFERRED_SIZE)
+									.addGap(8))))
 						.addGroup(gl_contentPane.createSequentialGroup()
-							.addGap(39)
-							.addComponent(add_for_total_btn, GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE)
-							.addGap(28)
 							.addComponent(shipping_methods, GroupLayout.PREFERRED_SIZE, 78, GroupLayout.PREFERRED_SIZE)
-							.addPreferredGap(ComponentPlacement.UNRELATED)
+							.addPreferredGap(ComponentPlacement.RELATED)
 							.addGroup(gl_contentPane.createParallelGroup(Alignment.BASELINE)
 								.addComponent(ups_textField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-								.addComponent(upsRadioBtn, GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE))
-							.addGap(23)
-							.addComponent(calculate_btn, GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)))
+								.addComponent(upsRadioBtn, GroupLayout.DEFAULT_SIZE, 31, Short.MAX_VALUE))))
 					.addGap(18)
-					.addComponent(scrollPane_for_textfield, GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
-					.addGap(18))
+					.addComponent(scrollPane_for_textfield, GroupLayout.PREFERRED_SIZE, 314, GroupLayout.PREFERRED_SIZE)
+					.addGap(22))
 		);
-		
-		result_textfield = new JTextArea();
-		result_textfield.setWrapStyleWord(true);
-		result_textfield.setLineWrap(true);
-		scrollPane_for_textfield.setViewportView(result_textfield);
+		total = new JTextArea();
+		total.setWrapStyleWord(true);
+		total.setLineWrap(true);
+		scrollPane_for_textfield.setViewportView(total);
 		
 		usps_mediumbox = new JRadioButton("USPS Medium Box");
 		shipping_methods.add(usps_mediumbox);
@@ -236,5 +314,6 @@ public class MyQuoter1_7 extends JFrame {
 		usps_express_shipping = new JRadioButton("USPS Express Shipping ");
 		shipping_methods.add(usps_express_shipping);
 		contentPane.setLayout(gl_contentPane);
+		
 	}
 }
