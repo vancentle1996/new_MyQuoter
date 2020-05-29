@@ -1,6 +1,5 @@
 package myquoter_gui;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.util.Stack;
 import javax.swing.JFrame;
@@ -8,37 +7,26 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.JList;
-import javax.swing.AbstractListModel;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.LineBorder;
-import java.awt.Color;
-import javax.swing.border.MatteBorder;
-import javax.swing.border.SoftBevelBorder;
 import javax.swing.JScrollPane;
-import javax.swing.JTree;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
 import javax.swing.JRadioButton;
-import java.awt.Component;
 import javax.swing.Box;
-import java.awt.Dimension;
 import java.awt.Font;
-import javax.swing.JTextPane;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
 public class MyQuoter1_7 extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JComboBox<String> patterns;
 	private JButton add_btn_1;
@@ -52,7 +40,6 @@ public class MyQuoter1_7 extends JFrame {
 	private JTextField ups_textField;
 	private JComboBox<String> bundles_and_wigs_lengths;
 	private JComboBox<String> closure_and_frontal_lengths;
-	private int quantity; 
 	private Stack<String> orderStack = new Stack<String>();
 	private JButton clearBtn;
 	private JButton gobackBtn;
@@ -123,6 +110,13 @@ public class MyQuoter1_7 extends JFrame {
 					if(patterns.getSelectedIndex() >= 44 && patterns.getSelectedIndex() <= 46) {
 						bundles_and_wigs_lengths.setEnabled(true);
 						closure_and_frontal_lengths.setEnabled(false);
+					}
+					
+					int index = patterns.getSelectedIndex();
+					
+					switch(index) {
+						case 0: 
+							break;
 					}
 					
 				}
