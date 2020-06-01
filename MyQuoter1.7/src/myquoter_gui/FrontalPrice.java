@@ -87,6 +87,18 @@ public class FrontalPrice {
 		return steam2FrontalPrice;
 	}
 	
+	public double blondeFrontal(int index) {
+		switch(index) {
+			case 0: blondeFrontalPrice = 105; break;
+			case 1: blondeFrontalPrice = 115; break;
+			case 2: blondeFrontalPrice = 120; break;
+			case 3: blondeFrontalPrice = 125; break;
+			case 4: blondeFrontalPrice = 130; break;
+			case 5: blondeFrontalPrice = 135; break;
+		}
+		return blondeFrontalPrice;
+	}
+	
 	public double greyFrontal(int index) {
 		switch(index) {
 			case 0: greyFrontalPrice = 92.50; break;
