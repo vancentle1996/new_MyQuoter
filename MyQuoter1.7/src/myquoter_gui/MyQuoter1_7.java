@@ -142,7 +142,7 @@ public class MyQuoter1_7 extends JFrame {
 					}
 					if(patterns.getSelectedIndex() >= 30 && patterns.getSelectedIndex() <= 43) {
 						bundles_and_wigs_lengths.setEnabled(true);
-						closure_and_frontal_lengths.setEnabled(false);
+						closure_and_frontal_lengths.setEnabled(false);	
 					}
 					if(patterns.getSelectedIndex() >= 44 && patterns.getSelectedIndex() <= 46) {
 						bundles_and_wigs_lengths.setEnabled(true);
@@ -344,6 +344,8 @@ public class MyQuoter1_7 extends JFrame {
 				orderStack.removeAllElements();
 				price.removeAllElements();
 				quan.removeAllElements();
+				totalPrice = 0;
+				totalQuantity = 0;
 			}
 		});
 		
